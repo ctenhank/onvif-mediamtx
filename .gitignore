@@ -4,3 +4,5 @@
 /apidocs/*.html
 /internal/servers/hls/hls.min.js
 /internal/staticsources/rpicamera/mtxrpicam_*
+/recordings
+mediamtx.yml
