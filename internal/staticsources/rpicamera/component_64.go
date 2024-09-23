@@ -7,5 +7,5 @@ import (
 	"embed"
 )
 
-//go:embed mtxrpicam_64/*
+//[temp: build error] go:embed mtxrpicam_64/*
 var component embed.FS
