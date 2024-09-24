@@ -6,3 +6,4 @@
 /internal/staticsources/rpicamera/mtxrpicam_*
 /recordings
 mediamtx.yml
+/build

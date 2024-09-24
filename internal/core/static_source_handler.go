@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -23,7 +24,7 @@ const (
 	staticSourceHandlerRetryPause = 5 * time.Second
 )
 
-func resolveSource(s string, matches []string, query string) string {
+func resolveSource(s string, matches []string, query string, username string, password string) (string, error) {
 	if len(matches) > 1 {
 		for i, ma := range matches[1:] {
 			s = strings.ReplaceAll(s, "$G"+strconv.FormatInt(int64(i+1), 10), ma)
@@ -32,7 +33,14 @@ func resolveSource(s string, matches []string, query string) string {
 
 	s = strings.ReplaceAll(s, "$MTX_QUERY", query)
 
-	return s
+	u, err := url.Parse(s)
+	if err != nil {
+		return "", err
+	}
+
+	u.User = url.UserPassword(username, password)
+
+	return u.String(), nil
 }
 
 type staticSourceHandlerParent interface {
@@ -180,7 +188,11 @@ func (s *staticSourceHandler) run() {
 	runReloadConf := make(chan *conf.Path)
 
 	recreate := func() {
-		resolvedSource := resolveSource(s.conf.Source, s.matches, s.query)
+		resolvedSource, err := resolveSource(s.conf.Source, s.matches, s.query, s.conf.Username, s.conf.Password)
+		if err != nil {
+			s.Log(logger.Error, "Failed to resolve Source %s: %s", s.conf.Source, err)
+			return
+		}
 
 		runCtx, runCtxCancel = context.WithCancel(context.Background())
 		go func() {

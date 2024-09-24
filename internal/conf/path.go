@@ -95,6 +95,9 @@ type Path struct {
 	MaxReaders                 int            `json:"maxReaders"`
 	SRTReadPassphrase          string         `json:"srtReadPassphrase"`
 	Fallback                   string         `json:"fallback"`
+	Username                   string         `json:"username"`
+	Password                   string         `json:"password"`
+	HttpPort                   int            `json:"httpPort"` // CCTV API port
 
 	// Record
 	Record                bool           `json:"record"`
