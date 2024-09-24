@@ -58,26 +58,6 @@ func TestConfFromFile(t *testing.T) {
 			RecordSegmentDuration:      3600000000000,
 			RecordDeleteAfter:          86400000000000,
 			OverridePublisher:          true,
-			RPICameraWidth:             1920,
-			RPICameraHeight:            1080,
-			RPICameraContrast:          1,
-			RPICameraSaturation:        1,
-			RPICameraSharpness:         1,
-			RPICameraExposure:          "normal",
-			RPICameraAWB:               "auto",
-			RPICameraAWBGains:          []float64{0, 0},
-			RPICameraDenoise:           "off",
-			RPICameraMetering:          "centre",
-			RPICameraFPS:               30,
-			RPICameraAfMode:            "continuous",
-			RPICameraAfRange:           "normal",
-			RPICameraAfSpeed:           "normal",
-			RPICameraTextOverlay:       "%Y-%m-%d %H:%M:%S - MediaMTX",
-			RPICameraCodec:             "auto",
-			RPICameraIDRPeriod:         60,
-			RPICameraBitrate:           1000000,
-			RPICameraProfile:           "main",
-			RPICameraLevel:             "4.1",
 			RunOnDemandStartTimeout:    5 * StringDuration(time.Second),
 			RunOnDemandCloseAfter:      10 * StringDuration(time.Second),
 		}, pa)
@@ -321,15 +301,7 @@ func TestConfErrors(t *testing.T) {
 				"    source: publisher\n",
 			"invalid path name '': cannot be empty",
 		},
-		{
-			"double raspberry pi camera",
-			"paths:\n" +
-				"  cam1:\n" +
-				"    source: rpiCamera\n" +
-				"  cam2:\n" +
-				"    source: rpiCamera\n",
-			"'rpiCamera' with same camera ID 0 is used as source in two paths, 'cam2' and 'cam1'",
-		},
+
 		{
 			"invalid srt publish passphrase",
 			"paths:\n" +

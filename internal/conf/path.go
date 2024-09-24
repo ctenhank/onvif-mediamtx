@@ -132,43 +132,6 @@ type Path struct {
 	// Redirect source
 	SourceRedirect string `json:"sourceRedirect"`
 
-	// Raspberry Pi Camera source
-	RPICameraCamID             uint      `json:"rpiCameraCamID"`
-	RPICameraWidth             uint      `json:"rpiCameraWidth"`
-	RPICameraHeight            uint      `json:"rpiCameraHeight"`
-	RPICameraHFlip             bool      `json:"rpiCameraHFlip"`
-	RPICameraVFlip             bool      `json:"rpiCameraVFlip"`
-	RPICameraBrightness        float64   `json:"rpiCameraBrightness"`
-	RPICameraContrast          float64   `json:"rpiCameraContrast"`
-	RPICameraSaturation        float64   `json:"rpiCameraSaturation"`
-	RPICameraSharpness         float64   `json:"rpiCameraSharpness"`
-	RPICameraExposure          string    `json:"rpiCameraExposure"`
-	RPICameraAWB               string    `json:"rpiCameraAWB"`
-	RPICameraAWBGains          []float64 `json:"rpiCameraAWBGains"`
-	RPICameraDenoise           string    `json:"rpiCameraDenoise"`
-	RPICameraShutter           uint      `json:"rpiCameraShutter"`
-	RPICameraMetering          string    `json:"rpiCameraMetering"`
-	RPICameraGain              float64   `json:"rpiCameraGain"`
-	RPICameraEV                float64   `json:"rpiCameraEV"`
-	RPICameraROI               string    `json:"rpiCameraROI"`
-	RPICameraHDR               bool      `json:"rpiCameraHDR"`
-	RPICameraTuningFile        string    `json:"rpiCameraTuningFile"`
-	RPICameraMode              string    `json:"rpiCameraMode"`
-	RPICameraFPS               float64   `json:"rpiCameraFPS"`
-	RPICameraAfMode            string    `json:"rpiCameraAfMode"`
-	RPICameraAfRange           string    `json:"rpiCameraAfRange"`
-	RPICameraAfSpeed           string    `json:"rpiCameraAfSpeed"`
-	RPICameraLensPosition      float64   `json:"rpiCameraLensPosition"`
-	RPICameraAfWindow          string    `json:"rpiCameraAfWindow"`
-	RPICameraFlickerPeriod     uint      `json:"rpiCameraFlickerPeriod"`
-	RPICameraTextOverlayEnable bool      `json:"rpiCameraTextOverlayEnable"`
-	RPICameraTextOverlay       string    `json:"rpiCameraTextOverlay"`
-	RPICameraCodec             string    `json:"rpiCameraCodec"`
-	RPICameraIDRPeriod         uint      `json:"rpiCameraIDRPeriod"`
-	RPICameraBitrate           uint      `json:"rpiCameraBitrate"`
-	RPICameraProfile           string    `json:"rpiCameraProfile"`
-	RPICameraLevel             string    `json:"rpiCameraLevel"`
-
 	// Hooks
 	RunOnInit                  string         `json:"runOnInit"`
 	RunOnInitRestart           bool           `json:"runOnInitRestart"`
@@ -202,28 +165,6 @@ func (pconf *Path) setDefaults() {
 
 	// Publisher source
 	pconf.OverridePublisher = true
-
-	// Raspberry Pi Camera source
-	pconf.RPICameraWidth = 1920
-	pconf.RPICameraHeight = 1080
-	pconf.RPICameraContrast = 1
-	pconf.RPICameraSaturation = 1
-	pconf.RPICameraSharpness = 1
-	pconf.RPICameraExposure = "normal"
-	pconf.RPICameraAWB = "auto"
-	pconf.RPICameraAWBGains = []float64{0, 0}
-	pconf.RPICameraDenoise = "off"
-	pconf.RPICameraMetering = "centre"
-	pconf.RPICameraFPS = 30
-	pconf.RPICameraAfMode = "continuous"
-	pconf.RPICameraAfRange = "normal"
-	pconf.RPICameraAfSpeed = "normal"
-	pconf.RPICameraTextOverlay = "%Y-%m-%d %H:%M:%S - MediaMTX"
-	pconf.RPICameraCodec = "auto"
-	pconf.RPICameraIDRPeriod = 60
-	pconf.RPICameraBitrate = 1000000
-	pconf.RPICameraProfile = "main"
-	pconf.RPICameraLevel = "4.1"
 
 	// Hooks
 	pconf.RunOnDemandStartTimeout = 10 * StringDuration(time.Second)
@@ -353,8 +294,6 @@ func (pconf *Path) validate(
 		}
 
 	case pconf.Source == "redirect":
-
-	case pconf.Source == "rpiCamera":
 
 	default:
 		return fmt.Errorf("invalid source: '%s'", pconf.Source)
@@ -506,61 +445,6 @@ func (pconf *Path) validate(
 		}
 	}
 
-	// Raspberry Pi Camera source
-
-	if pconf.Source == "rpiCamera" {
-		for otherName, otherPath := range conf.Paths {
-			if otherPath != pconf && otherPath != nil &&
-				otherPath.Source == "rpiCamera" && otherPath.RPICameraCamID == pconf.RPICameraCamID {
-				return fmt.Errorf("'rpiCamera' with same camera ID %d is used as source in two paths, '%s' and '%s'",
-					pconf.RPICameraCamID, name, otherName)
-			}
-		}
-	}
-	switch pconf.RPICameraExposure {
-	case "normal", "short", "long", "custom":
-	default:
-		return fmt.Errorf("invalid 'rpiCameraExposure' value")
-	}
-	switch pconf.RPICameraAWB {
-	case "auto", "incandescent", "tungsten", "fluorescent", "indoor", "daylight", "cloudy", "custom":
-	default:
-		return fmt.Errorf("invalid 'rpiCameraAWB' value")
-	}
-	if len(pconf.RPICameraAWBGains) != 2 {
-		return fmt.Errorf("invalid 'rpiCameraAWBGains' value")
-	}
-	switch pconf.RPICameraDenoise {
-	case "off", "cdn_off", "cdn_fast", "cdn_hq":
-	default:
-		return fmt.Errorf("invalid 'rpiCameraDenoise' value")
-	}
-	switch pconf.RPICameraMetering {
-	case "centre", "spot", "matrix", "custom":
-	default:
-		return fmt.Errorf("invalid 'rpiCameraMetering' value")
-	}
-	switch pconf.RPICameraAfMode {
-	case "auto", "manual", "continuous":
-	default:
-		return fmt.Errorf("invalid 'rpiCameraAfMode' value")
-	}
-	switch pconf.RPICameraAfRange {
-	case "normal", "macro", "full":
-	default:
-		return fmt.Errorf("invalid 'rpiCameraAfRange' value")
-	}
-	switch pconf.RPICameraAfSpeed {
-	case "normal", "fast":
-	default:
-		return fmt.Errorf("invalid 'rpiCameraAfSpeed' value")
-	}
-	switch pconf.RPICameraCodec {
-	case "auto", "hardwareH264", "softwareH264":
-	default:
-		return fmt.Errorf("invalid 'rpiCameraCodec' value")
-	}
-
 	// Hooks
 
 	if pconf.RunOnInit != "" && pconf.Regexp != nil {
@@ -590,8 +474,7 @@ func (pconf Path) HasStaticSource() bool {
 		strings.HasPrefix(pconf.Source, "udp://") ||
 		strings.HasPrefix(pconf.Source, "srt://") ||
 		strings.HasPrefix(pconf.Source, "whep://") ||
-		strings.HasPrefix(pconf.Source, "wheps://") ||
-		pconf.Source == "rpiCamera"
+		strings.HasPrefix(pconf.Source, "wheps://")
 }
 
 // HasOnDemandStaticSource checks whether the path has a on demand static source.

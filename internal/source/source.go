@@ -1,5 +1,5 @@
 // Package rtsp contains the RTSP static source.
-package rtsp
+package source
 
 import (
 	"time"

@@ -390,7 +390,6 @@ func TestConfigPathsAdd(t *testing.T) {
 			"source":                   "rtsp://127.0.0.1:9999/mypath",
 			"sourceOnDemand":           true,
 			"disablePublisherOverride": true, // test setting a deprecated parameter
-			"rpiCameraVFlip":           true,
 		}, nil)
 
 	var out map[string]interface{}
@@ -398,7 +397,6 @@ func TestConfigPathsAdd(t *testing.T) {
 	require.Equal(t, "rtsp://127.0.0.1:9999/mypath", out["source"])
 	require.Equal(t, true, out["sourceOnDemand"])
 	require.Equal(t, true, out["disablePublisherOverride"])
-	require.Equal(t, true, out["rpiCameraVFlip"])
 }
 
 func TestConfigPathsAddUnknownField(t *testing.T) { //nolint:dupl
@@ -461,7 +459,6 @@ func TestConfigPathsPatch(t *testing.T) { //nolint:dupl
 			"source":                   "rtsp://127.0.0.1:9999/mypath",
 			"sourceOnDemand":           true,
 			"disablePublisherOverride": true, // test setting a deprecated parameter
-			"rpiCameraVFlip":           true,
 		}, nil)
 
 	httpRequest(t, hc, http.MethodPatch, "http://localhost:9997/v3/config/paths/patch/my/path",
@@ -475,7 +472,6 @@ func TestConfigPathsPatch(t *testing.T) { //nolint:dupl
 	require.Equal(t, "rtsp://127.0.0.1:9998/mypath", out["source"])
 	require.Equal(t, true, out["sourceOnDemand"])
 	require.Equal(t, true, out["disablePublisherOverride"])
-	require.Equal(t, true, out["rpiCameraVFlip"])
 }
 
 func TestConfigPathsReplace(t *testing.T) { //nolint:dupl
@@ -501,7 +497,6 @@ func TestConfigPathsReplace(t *testing.T) { //nolint:dupl
 			"source":                   "rtsp://127.0.0.1:9999/mypath",
 			"sourceOnDemand":           true,
 			"disablePublisherOverride": true, // test setting a deprecated parameter
-			"rpiCameraVFlip":           true,
 		}, nil)
 
 	httpRequest(t, hc, http.MethodPost, "http://localhost:9997/v3/config/paths/replace/my/path",
@@ -515,7 +510,6 @@ func TestConfigPathsReplace(t *testing.T) { //nolint:dupl
 	require.Equal(t, "rtsp://127.0.0.1:9998/mypath", out["source"])
 	require.Equal(t, true, out["sourceOnDemand"])
 	require.Equal(t, nil, out["disablePublisherOverride"])
-	require.Equal(t, false, out["rpiCameraVFlip"])
 }
 
 func TestConfigPathsReplaceNonExisting(t *testing.T) { //nolint:dupl
@@ -547,7 +541,6 @@ func TestConfigPathsReplaceNonExisting(t *testing.T) { //nolint:dupl
 	require.Equal(t, "rtsp://127.0.0.1:9998/mypath", out["source"])
 	require.Equal(t, true, out["sourceOnDemand"])
 	require.Equal(t, nil, out["disablePublisherOverride"])
-	require.Equal(t, false, out["rpiCameraVFlip"])
 }
 
 func TestConfigPathsDelete(t *testing.T) {

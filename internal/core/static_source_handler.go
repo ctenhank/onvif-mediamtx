@@ -11,13 +11,7 @@ import (
 	"github.com/bluenviron/mediamtx/internal/conf"
 	"github.com/bluenviron/mediamtx/internal/defs"
 	"github.com/bluenviron/mediamtx/internal/logger"
-	hlssource "github.com/bluenviron/mediamtx/internal/staticsources/hls"
-	rpicamerasource "github.com/bluenviron/mediamtx/internal/staticsources/rpicamera"
-	rtmpsource "github.com/bluenviron/mediamtx/internal/staticsources/rtmp"
-	rtspsource "github.com/bluenviron/mediamtx/internal/staticsources/rtsp"
-	srtsource "github.com/bluenviron/mediamtx/internal/staticsources/srt"
-	udpsource "github.com/bluenviron/mediamtx/internal/staticsources/udp"
-	webrtcsource "github.com/bluenviron/mediamtx/internal/staticsources/webrtc"
+	rtspsource "github.com/bluenviron/mediamtx/internal/source"
 )
 
 const (
@@ -88,47 +82,6 @@ func (s *staticSourceHandler) initialize() {
 			WriteQueueSize: s.writeQueueSize,
 			Parent:         s,
 		}
-
-	case strings.HasPrefix(s.conf.Source, "rtmp://") ||
-		strings.HasPrefix(s.conf.Source, "rtmps://"):
-		s.instance = &rtmpsource.Source{
-			ReadTimeout:  s.readTimeout,
-			WriteTimeout: s.writeTimeout,
-			Parent:       s,
-		}
-
-	case strings.HasPrefix(s.conf.Source, "http://") ||
-		strings.HasPrefix(s.conf.Source, "https://"):
-		s.instance = &hlssource.Source{
-			ReadTimeout: s.readTimeout,
-			Parent:      s,
-		}
-
-	case strings.HasPrefix(s.conf.Source, "udp://"):
-		s.instance = &udpsource.Source{
-			ReadTimeout: s.readTimeout,
-			Parent:      s,
-		}
-
-	case strings.HasPrefix(s.conf.Source, "srt://"):
-		s.instance = &srtsource.Source{
-			ReadTimeout: s.readTimeout,
-			Parent:      s,
-		}
-
-	case strings.HasPrefix(s.conf.Source, "whep://") ||
-		strings.HasPrefix(s.conf.Source, "wheps://"):
-		s.instance = &webrtcsource.Source{
-			ReadTimeout: s.readTimeout,
-			Parent:      s,
-		}
-
-	case s.conf.Source == "rpiCamera":
-		s.instance = &rpicamerasource.Source{
-			LogLevel: s.logLevel,
-			Parent:   s,
-		}
-
 	default:
 		panic("should not happen")
 	}
