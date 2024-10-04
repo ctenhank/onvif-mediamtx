@@ -14,9 +14,9 @@ import (
 	"github.com/bluenviron/mediacommon/pkg/codecs/mpeg4video"
 	"github.com/bluenviron/mediacommon/pkg/formats/mpegts"
 
-	"github.com/bluenviron/mediamtx/internal/defs"
-	"github.com/bluenviron/mediamtx/internal/logger"
-	"github.com/bluenviron/mediamtx/internal/unit"
+	"github.com/ctenhank/mediamtx/internal/defs"
+	"github.com/ctenhank/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/unit"
 )
 
 const (

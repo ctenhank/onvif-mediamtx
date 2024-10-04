@@ -17,10 +17,10 @@ import (
 	"github.com/bluenviron/gortsplib/v4"
 	"github.com/bluenviron/gortsplib/v4/pkg/auth"
 
-	"github.com/bluenviron/mediamtx/internal/conf/decrypt"
-	"github.com/bluenviron/mediamtx/internal/conf/env"
-	"github.com/bluenviron/mediamtx/internal/conf/yaml"
-	"github.com/bluenviron/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/conf/decrypt"
+	"github.com/ctenhank/mediamtx/internal/conf/env"
+	"github.com/ctenhank/mediamtx/internal/conf/yaml"
+	"github.com/ctenhank/mediamtx/internal/logger"
 )
 
 // ErrPathNotFound is returned when a path is not found.
@@ -179,6 +179,15 @@ type Conf struct {
 	AuthJWTJWKS               string                      `json:"authJWTJWKS"`
 	AuthJWTClaimKey           string                      `json:"authJWTClaimKey"`
 
+	// CCTV-specific API
+	Control               bool       `json:"control"`
+	ControlAddress        string     `json:"controlAddress"`
+	ControlEncryption     bool       `json:"controlEncryption"`
+	ControlServerKey      string     `json:"controlServerKey"`
+	ControlServerCert     string     `json:"controlServerCert"`
+	ControlAllowOrigin    string     `json:"controlAllowOrigin"`
+	ControlTrustedProxies IPNetworks `json:"controlTrustedProxies"`
+
 	// Control API
 	API               bool       `json:"api"`
 	APIAddress        string     `json:"apiAddress"`
@@ -293,6 +302,8 @@ type Conf struct {
 	RecordSegmentDuration *StringDuration `json:"recordSegmentDuration,omitempty"` // deprecated
 	RecordDeleteAfter     *StringDuration `json:"recordDeleteAfter,omitempty"`     // deprecated
 
+	// IPCameras
+
 	// Path defaults
 	PathDefaults Path `json:"pathDefaults"`
 
@@ -325,6 +336,12 @@ func (conf *Conf) setDefaults() {
 		},
 	}
 	conf.AuthJWTClaimKey = "mediamtx_permissions"
+
+	// CCTV-specific Control API
+	conf.ControlAddress = ":9995"
+	conf.ControlServerKey = "server.key"
+	conf.ControlServerCert = "server.crt"
+	conf.ControlAllowOrigin = "*"
 
 	// Control API
 	conf.APIAddress = ":9997"

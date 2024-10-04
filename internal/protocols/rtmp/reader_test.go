@@ -12,11 +12,11 @@ import (
 	"github.com/bluenviron/mediacommon/pkg/codecs/mpeg4audio"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bluenviron/mediamtx/internal/protocols/rtmp/amf0"
-	"github.com/bluenviron/mediamtx/internal/protocols/rtmp/bytecounter"
-	"github.com/bluenviron/mediamtx/internal/protocols/rtmp/h264conf"
-	"github.com/bluenviron/mediamtx/internal/protocols/rtmp/message"
-	"github.com/bluenviron/mediamtx/internal/test"
+	"github.com/ctenhank/mediamtx/internal/protocols/rtmp/amf0"
+	"github.com/ctenhank/mediamtx/internal/protocols/rtmp/bytecounter"
+	"github.com/ctenhank/mediamtx/internal/protocols/rtmp/h264conf"
+	"github.com/ctenhank/mediamtx/internal/protocols/rtmp/message"
+	"github.com/ctenhank/mediamtx/internal/test"
 )
 
 func TestReadTracks(t *testing.T) {

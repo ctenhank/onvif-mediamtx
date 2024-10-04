@@ -1,8 +1,8 @@
 package message
 
 import (
-	"github.com/bluenviron/mediamtx/internal/protocols/rtmp/amf0"
-	"github.com/bluenviron/mediamtx/internal/protocols/rtmp/rawmessage"
+	"github.com/ctenhank/mediamtx/internal/protocols/rtmp/amf0"
+	"github.com/ctenhank/mediamtx/internal/protocols/rtmp/rawmessage"
 )
 
 // DataAMF0 is a AMF0 data message.

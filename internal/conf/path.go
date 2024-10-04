@@ -80,6 +80,26 @@ func FindPathConf(pathConfs map[string]*Path, name string) (*Path, []string, err
 	return nil, nil, fmt.Errorf("path '%s' is not configured", name)
 }
 
+type IPCamera struct {
+	// Camera ID (unique)
+	Id       string `json:"id"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	// Camera가 다중 프로필 지원 여부에 따라서 다중 소스 스트림을 사용할지 여부
+	// 보통 IPCam은 두 개 이상의 Encoder를 제공한다. Encoder에 따라서 Camera Source 영상 품질이 결정된다.
+	// 흔히, Main Encoder, Sub, Third 등으로 나뉘어져 있다. 이런 경우, 다중 소스 스트림을 사용할 수 있다.
+	// 다중 소스 스트림을 사용하면, 각각의 Encoder에 대한 RTSP URL을 사용할 수 있다.
+	// 다중 소스 스트림을 사용하지 않으면, Main Encoder에 대한 RTSP URL만 사용할 수 있다(가장 높은 화질 또는 첫 번째 Encoder).
+	EnableMultiEncoder bool `json:"enableMultiEncoder"`
+
+	// CCTV Endpoint Port
+	PTZSupport bool   `json:"ptzSupport"` // Deprecated
+	Brand      string `json:"brand"`      // Deprecated
+	// Id         string `json:"id"`
+}
+
 // Path is a path configuration.
 // WARNING: Avoid using slices directly due to https://github.com/golang/go/issues/21092
 type Path struct {
@@ -97,7 +117,12 @@ type Path struct {
 	Fallback                   string         `json:"fallback"`
 	Username                   string         `json:"username"`
 	Password                   string         `json:"password"`
-	HttpPort                   int            `json:"httpPort"` // CCTV API port
+
+	// CCTV Endpoint Port
+	APIPort    string `json:"apiPort"`
+	PTZSupport bool   `json:"ptzSupport"` // Deprecated
+	Brand      string `json:"brand"`      // Deprecated
+	Id         string `json:"id"`
 
 	// Record
 	Record                bool           `json:"record"`
@@ -148,6 +173,8 @@ type Path struct {
 	RunOnUnread                string         `json:"runOnUnread"`
 	RunOnRecordSegmentCreate   string         `json:"runOnRecordSegmentCreate"`
 	RunOnRecordSegmentComplete string         `json:"runOnRecordSegmentComplete"`
+
+	StreamingUri string
 }
 
 func (pconf *Path) setDefaults() {
@@ -169,6 +196,10 @@ func (pconf *Path) setDefaults() {
 	// Hooks
 	pconf.RunOnDemandStartTimeout = 10 * StringDuration(time.Second)
 	pconf.RunOnDemandCloseAfter = 10 * StringDuration(time.Second)
+
+	// Control Server
+	pconf.APIPort = ":80"
+
 }
 
 func newPath(defaults *Path, partial *OptionalPath) *Path {

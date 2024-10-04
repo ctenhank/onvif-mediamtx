@@ -12,12 +12,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/bluenviron/mediamtx/internal/auth"
-	"github.com/bluenviron/mediamtx/internal/conf"
-	"github.com/bluenviron/mediamtx/internal/defs"
-	"github.com/bluenviron/mediamtx/internal/logger"
-	"github.com/bluenviron/mediamtx/internal/protocols/httpp"
-	"github.com/bluenviron/mediamtx/internal/restrictnetwork"
+	"github.com/ctenhank/mediamtx/internal/auth"
+	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/defs"
+	"github.com/ctenhank/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/protocols/httpp"
+	"github.com/ctenhank/mediamtx/internal/restrictnetwork"
 )
 
 //go:generate go run ./hlsjsdownloader
@@ -25,8 +25,9 @@ import (
 //go:embed index.html
 var hlsIndex []byte
 
+// [temp: build error] go:embed hls.min.js
+//
 //nolint:typecheck
-//[temp: build error] go:embed hls.min.js
 var hlsMinJS []byte
 
 func mergePathAndQuery(path string, rawQuery string) string {

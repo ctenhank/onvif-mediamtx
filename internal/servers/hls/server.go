@@ -8,10 +8,10 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/bluenviron/mediamtx/internal/conf"
-	"github.com/bluenviron/mediamtx/internal/defs"
-	"github.com/bluenviron/mediamtx/internal/logger"
-	"github.com/bluenviron/mediamtx/internal/stream"
+	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/defs"
+	"github.com/ctenhank/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/stream"
 )
 
 // ErrMuxerNotFound is returned when a muxer is not found.

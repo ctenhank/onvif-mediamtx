@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bluenviron/mediamtx/internal/conf"
-	"github.com/bluenviron/mediamtx/internal/defs"
-	"github.com/bluenviron/mediamtx/internal/logger"
-	rtspsource "github.com/bluenviron/mediamtx/internal/source"
+	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/defs"
+	"github.com/ctenhank/mediamtx/internal/logger"
+	rtspsource "github.com/ctenhank/mediamtx/internal/source"
 )
 
 const (
@@ -82,6 +82,7 @@ func (s *staticSourceHandler) initialize() {
 			WriteQueueSize: s.writeQueueSize,
 			Parent:         s,
 		}
+
 	default:
 		panic("should not happen")
 	}
@@ -142,6 +143,7 @@ func (s *staticSourceHandler) run() {
 
 	recreate := func() {
 		resolvedSource, err := resolveSource(s.conf.Source, s.matches, s.query, s.conf.Username, s.conf.Password)
+		s.Log(logger.Info, "resolved Source %s to %s", s.conf.Source, resolvedSource)
 		if err != nil {
 			s.Log(logger.Error, "Failed to resolve Source %s: %s", s.conf.Source, err)
 			return

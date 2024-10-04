@@ -1,9 +1,9 @@
 package hooks
 
 import (
-	"github.com/bluenviron/mediamtx/internal/conf"
-	"github.com/bluenviron/mediamtx/internal/externalcmd"
-	"github.com/bluenviron/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/externalcmd"
+	"github.com/ctenhank/mediamtx/internal/logger"
 )
 
 // OnDemandParams are the parameters of OnDemand.

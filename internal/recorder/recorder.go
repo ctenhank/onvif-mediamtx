@@ -4,9 +4,9 @@ package recorder
 import (
 	"time"
 
-	"github.com/bluenviron/mediamtx/internal/conf"
-	"github.com/bluenviron/mediamtx/internal/logger"
-	"github.com/bluenviron/mediamtx/internal/stream"
+	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/stream"
 )
 
 // OnSegmentCreateFunc is the prototype of the function passed as OnSegmentCreate

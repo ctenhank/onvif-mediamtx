@@ -12,12 +12,12 @@ import (
 	"github.com/bluenviron/gohlslib"
 	"github.com/bluenviron/gohlslib/pkg/codecs"
 	"github.com/bluenviron/gortsplib/v4/pkg/description"
-	"github.com/bluenviron/mediamtx/internal/conf"
-	"github.com/bluenviron/mediamtx/internal/defs"
-	"github.com/bluenviron/mediamtx/internal/externalcmd"
-	"github.com/bluenviron/mediamtx/internal/stream"
-	"github.com/bluenviron/mediamtx/internal/test"
-	"github.com/bluenviron/mediamtx/internal/unit"
+	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/defs"
+	"github.com/ctenhank/mediamtx/internal/externalcmd"
+	"github.com/ctenhank/mediamtx/internal/stream"
+	"github.com/ctenhank/mediamtx/internal/test"
+	"github.com/ctenhank/mediamtx/internal/unit"
 	"github.com/stretchr/testify/require"
 )
 

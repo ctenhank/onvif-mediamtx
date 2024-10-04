@@ -3,8 +3,8 @@ package defs
 import (
 	"context"
 
-	"github.com/bluenviron/mediamtx/internal/conf"
-	"github.com/bluenviron/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/logger"
 )
 
 // StaticSource is a static source.

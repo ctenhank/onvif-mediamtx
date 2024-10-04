@@ -24,10 +24,10 @@ import (
 	pwebrtc "github.com/pion/webrtc/v3"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bluenviron/mediamtx/internal/protocols/rtmp"
-	"github.com/bluenviron/mediamtx/internal/protocols/webrtc"
-	"github.com/bluenviron/mediamtx/internal/protocols/whip"
-	"github.com/bluenviron/mediamtx/internal/test"
+	"github.com/ctenhank/mediamtx/internal/protocols/rtmp"
+	"github.com/ctenhank/mediamtx/internal/protocols/webrtc"
+	"github.com/ctenhank/mediamtx/internal/protocols/whip"
+	"github.com/ctenhank/mediamtx/internal/test"
 )
 
 func checkClose(t *testing.T, closeFunc func() error) {

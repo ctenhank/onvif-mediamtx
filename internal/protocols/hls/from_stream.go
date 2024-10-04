@@ -8,10 +8,10 @@ import (
 	"github.com/bluenviron/gohlslib"
 	"github.com/bluenviron/gohlslib/pkg/codecs"
 	"github.com/bluenviron/gortsplib/v4/pkg/format"
-	"github.com/bluenviron/mediamtx/internal/asyncwriter"
-	"github.com/bluenviron/mediamtx/internal/logger"
-	"github.com/bluenviron/mediamtx/internal/stream"
-	"github.com/bluenviron/mediamtx/internal/unit"
+	"github.com/ctenhank/mediamtx/internal/asyncwriter"
+	"github.com/ctenhank/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/stream"
+	"github.com/ctenhank/mediamtx/internal/unit"
 )
 
 // ErrNoSupportedCodecs is returned by FromStream when there are no supported codecs.

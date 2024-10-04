@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bluenviron/mediamtx/internal/auth"
-	"github.com/bluenviron/mediamtx/internal/conf"
-	"github.com/bluenviron/mediamtx/internal/logger"
-	"github.com/bluenviron/mediamtx/internal/test"
+	"github.com/ctenhank/mediamtx/internal/auth"
+	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/test"
 	"github.com/stretchr/testify/require"
 )
 

@@ -18,7 +18,7 @@ import (
 	"github.com/bluenviron/gortsplib/v4/pkg/auth"
 	"github.com/bluenviron/gortsplib/v4/pkg/base"
 	"github.com/bluenviron/gortsplib/v4/pkg/headers"
-	"github.com/bluenviron/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/conf"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )

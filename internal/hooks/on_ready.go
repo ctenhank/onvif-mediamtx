@@ -1,10 +1,10 @@
 package hooks
 
 import (
-	"github.com/bluenviron/mediamtx/internal/conf"
-	"github.com/bluenviron/mediamtx/internal/defs"
-	"github.com/bluenviron/mediamtx/internal/externalcmd"
-	"github.com/bluenviron/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/defs"
+	"github.com/ctenhank/mediamtx/internal/externalcmd"
+	"github.com/ctenhank/mediamtx/internal/logger"
 )
 
 // OnReadyParams are the parameters of OnReady.

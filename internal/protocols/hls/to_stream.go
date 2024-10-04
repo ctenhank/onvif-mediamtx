@@ -7,8 +7,8 @@ import (
 	"github.com/bluenviron/gohlslib/pkg/codecs"
 	"github.com/bluenviron/gortsplib/v4/pkg/description"
 	"github.com/bluenviron/gortsplib/v4/pkg/format"
-	"github.com/bluenviron/mediamtx/internal/stream"
-	"github.com/bluenviron/mediamtx/internal/unit"
+	"github.com/ctenhank/mediamtx/internal/stream"
+	"github.com/ctenhank/mediamtx/internal/unit"
 )
 
 // ToStream maps a HLS stream to a MediaMTX stream.

@@ -15,13 +15,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"github.com/bluenviron/mediamtx/internal/auth"
-	"github.com/bluenviron/mediamtx/internal/conf"
-	"github.com/bluenviron/mediamtx/internal/defs"
-	"github.com/bluenviron/mediamtx/internal/logger"
-	"github.com/bluenviron/mediamtx/internal/protocols/httpp"
-	"github.com/bluenviron/mediamtx/internal/protocols/whip"
-	"github.com/bluenviron/mediamtx/internal/restrictnetwork"
+	"github.com/ctenhank/mediamtx/internal/auth"
+	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/defs"
+	"github.com/ctenhank/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/protocols/httpp"
+	"github.com/ctenhank/mediamtx/internal/protocols/whip"
+	"github.com/ctenhank/mediamtx/internal/restrictnetwork"
 )
 
 //go:embed publish_index.html

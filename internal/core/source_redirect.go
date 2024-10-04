@@ -1,8 +1,8 @@
 package core
 
 import (
-	"github.com/bluenviron/mediamtx/internal/defs"
-	"github.com/bluenviron/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/defs"
+	"github.com/ctenhank/mediamtx/internal/logger"
 )
 
 // sourceRedirect is a source that redirects to another one.

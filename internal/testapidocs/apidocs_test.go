@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bluenviron/mediamtx/internal/conf"
-	"github.com/bluenviron/mediamtx/internal/conf/yaml"
-	"github.com/bluenviron/mediamtx/internal/defs"
+	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/conf/yaml"
+	"github.com/ctenhank/mediamtx/internal/defs"
 	"github.com/stretchr/testify/require"
 )
 

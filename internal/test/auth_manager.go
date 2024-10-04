@@ -1,6 +1,6 @@
 package test
 
-import "github.com/bluenviron/mediamtx/internal/auth"
+import "github.com/ctenhank/mediamtx/internal/auth"
 
 // AuthManager is a test auth manager.
 type AuthManager struct {

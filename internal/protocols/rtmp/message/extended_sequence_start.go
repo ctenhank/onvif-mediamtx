@@ -3,7 +3,7 @@ package message
 import (
 	"fmt"
 
-	"github.com/bluenviron/mediamtx/internal/protocols/rtmp/rawmessage"
+	"github.com/ctenhank/mediamtx/internal/protocols/rtmp/rawmessage"
 )
 
 // ExtendedSequenceStart is a sequence start extended message.

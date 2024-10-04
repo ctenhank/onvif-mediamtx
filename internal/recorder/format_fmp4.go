@@ -19,10 +19,10 @@ import (
 	"github.com/bluenviron/mediacommon/pkg/codecs/vp9"
 	"github.com/bluenviron/mediacommon/pkg/formats/fmp4"
 
-	"github.com/bluenviron/mediamtx/internal/defs"
-	"github.com/bluenviron/mediamtx/internal/formatprocessor"
-	"github.com/bluenviron/mediamtx/internal/logger"
-	"github.com/bluenviron/mediamtx/internal/unit"
+	"github.com/ctenhank/mediamtx/internal/defs"
+	"github.com/ctenhank/mediamtx/internal/formatprocessor"
+	"github.com/ctenhank/mediamtx/internal/logger"
+	"github.com/ctenhank/mediamtx/internal/unit"
 )
 
 func durationGoToMp4(v time.Duration, timeScale uint32) uint64 {

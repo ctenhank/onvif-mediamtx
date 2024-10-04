@@ -8,10 +8,10 @@ import (
 	"github.com/bluenviron/gortsplib/v4/pkg/description"
 	"github.com/google/uuid"
 
-	"github.com/bluenviron/mediamtx/internal/auth"
-	"github.com/bluenviron/mediamtx/internal/conf"
-	"github.com/bluenviron/mediamtx/internal/externalcmd"
-	"github.com/bluenviron/mediamtx/internal/stream"
+	"github.com/ctenhank/mediamtx/internal/auth"
+	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/externalcmd"
+	"github.com/ctenhank/mediamtx/internal/stream"
 )
 
 // PathNoOnePublishingError is returned when no one is publishing.
