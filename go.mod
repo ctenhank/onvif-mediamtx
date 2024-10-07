@@ -4,6 +4,7 @@ go 1.22
 
 require (
 	code.cloudfoundry.org/bytefmt v0.0.0
+	github.com/IOTechSystems/onvif v1.1.2
 	github.com/MicahParks/jwkset v0.5.20
 	github.com/MicahParks/keyfunc/v3 v3.3.5
 	github.com/abema/go-mp4 v1.2.0
@@ -19,6 +20,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gookit/color v1.5.4
 	github.com/gorilla/websocket v1.5.3
+	github.com/icholy/digest v0.1.23
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
 	github.com/matthewhartstonge/argon2 v1.0.1
 	github.com/pion/ice/v2 v2.3.24
@@ -37,12 +39,15 @@ require (
 
 require (
 	github.com/asticode/go-astikit v0.30.0 // indirect
+	github.com/beevik/etree v1.4.0 // indirect
 	github.com/benburkert/openpgp v0.0.0-20160410205803-c2471f86866c // indirect
 	github.com/bytedance/sonic v1.11.6 // indirect
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
+	github.com/clbanning/mxj/v2 v2.7.0 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/elgs/gostrgen v0.0.0-20161222160715-9d61ae07eeae // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -51,6 +56,7 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -74,6 +80,7 @@ require (
 	golang.org/x/text v0.18.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 

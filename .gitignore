@@ -7,3 +7,5 @@
 /recordings
 mediamtx.yml
 /build
+onvif-test/
+.vscode/

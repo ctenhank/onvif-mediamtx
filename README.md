@@ -4,6 +4,10 @@
 * Simple Mediamtx mainly focuses on the **Network Camera (ONVIF support)**
   * ONVIF Camera expose an RTP/RTSP endpoint for video streaming
   * Simple Mediamtx keep only RTSP source to make this server simple
+  * ONVIF Camera provides endpoints to manipulate itself
+
 # Features
 * CCTV-specific config
 * CCTV-specific features: features, ...
+* ONVIF compatible CCTV
+  - Auto StreamUri 

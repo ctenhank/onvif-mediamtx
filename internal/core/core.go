@@ -19,6 +19,7 @@ import (
 	"github.com/ctenhank/mediamtx/internal/auth"
 	"github.com/ctenhank/mediamtx/internal/conf"
 	"github.com/ctenhank/mediamtx/internal/confwatcher"
+	"github.com/ctenhank/mediamtx/internal/control"
 	"github.com/ctenhank/mediamtx/internal/externalcmd"
 	"github.com/ctenhank/mediamtx/internal/logger"
 	"github.com/ctenhank/mediamtx/internal/metrics"
@@ -70,6 +71,7 @@ type Core struct {
 	webRTCServer    *webrtc.Server
 	srtServer       *srt.Server
 	api             *api.API
+	controlServer   *control.Control
 	confWatcher     *confwatcher.ConfWatcher
 
 	// in
@@ -308,6 +310,25 @@ func (p *Core) createResources(initial bool) error {
 		p.recordCleaner.Initialize()
 	}
 
+	if p.conf.Playback && p.controlServer == nil {
+		i := &control.Control{
+			Address:        p.conf.ControlAddress,
+			Encryption:     p.conf.ControlEncryption,
+			ServerKey:      p.conf.ControlServerKey,
+			ServerCert:     p.conf.ControlServerCert,
+			AllowOrigin:    p.conf.ControlAllowOrigin,
+			TrustedProxies: p.conf.ControlTrustedProxies,
+			ReadTimeout:    p.conf.ReadTimeout,
+			Conf:           p.conf,
+			Parent:         p,
+		}
+		err = i.Initialize()
+		if err != nil {
+			return err
+		}
+		p.controlServer = i
+	}
+
 	if p.conf.Playback &&
 		p.playbackServer == nil {
 		i := &playback.Server{
@@ -330,6 +351,20 @@ func (p *Core) createResources(initial bool) error {
 	}
 
 	if p.pathManager == nil {
+		devices := p.controlServer.OnvifDevices
+		paths := map[string]*conf.Path{}
+		for _, d := range devices {
+			for i, u := range *d.StreamUris {
+				name := d.Conf.Name + "-" + fmt.Sprint(i)
+
+				p := *d.Conf
+				p.Source = string(u.Uri)
+				p.Name = name
+
+				paths[name] = &p
+			}
+		}
+
 		p.pathManager = &pathManager{
 			logLevel:          p.conf.LogLevel,
 			authManager:       p.authManager,
@@ -338,7 +373,7 @@ func (p *Core) createResources(initial bool) error {
 			writeTimeout:      p.conf.WriteTimeout,
 			writeQueueSize:    p.conf.WriteQueueSize,
 			udpMaxPayloadSize: p.conf.UDPMaxPayloadSize,
-			pathConfs:         p.conf.Paths,
+			pathConfs:         paths,
 			externalCmdPool:   p.externalCmdPool,
 			parent:            p,
 		}
