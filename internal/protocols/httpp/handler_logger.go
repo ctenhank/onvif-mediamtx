@@ -1,8 +1,10 @@
 package httpp
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
+	"net"
 	"net/http"
 	"net/http/httputil"
 
@@ -13,6 +15,15 @@ type loggerWriter struct {
 	w      http.ResponseWriter
 	status int
 	buf    bytes.Buffer
+	// http.Hijacker
+}
+
+func (w *loggerWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	h, ok := w.w.(http.Hijacker)
+	if !ok {
+		return nil, nil, fmt.Errorf("http.Hijacker not implemented")
+	}
+	return h.Hijack()
 }
 
 func (w *loggerWriter) Header() http.Header {
