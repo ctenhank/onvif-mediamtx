@@ -143,7 +143,6 @@ func (s *staticSourceHandler) run() {
 
 	recreate := func() {
 		resolvedSource, err := resolveSource(s.conf.Source, s.matches, s.query, s.conf.Username, s.conf.Password)
-		s.Log(logger.Info, "resolved Source %s to %s", s.conf.Source, resolvedSource)
 		if err != nil {
 			s.Log(logger.Error, "Failed to resolve Source %s: %s", s.conf.Source, err)
 			return

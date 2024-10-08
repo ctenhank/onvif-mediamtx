@@ -125,16 +125,19 @@ func (o *onvifDevice) initialize() error {
 		profiles := []Profile{}
 
 		for i, profile := range proResp.Profiles {
+			pathName := o.Conf.Name + "_" + fmt.Sprint(i)
+			if i == 0 {
+				pathName = o.Conf.Name
+			}
 			profiles = append(profiles, Profile{
 				Profile:  profile,
-				PathName: o.Conf.Name + "_" + fmt.Sprint(i),
+				PathName: pathName,
 			})
 		}
 
 		o.Profiles = &profiles
 
 		streamUris := []MediaUri{}
-		o.parent.Log(logger.Info, "4")
 		for _, profile := range *o.Profiles {
 			stResp, err := o.getStreamUri(&profile.Token)
 
