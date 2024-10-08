@@ -34,6 +34,16 @@ const debug = true
 
 var filename = time.Now().Format("20060102_150405") + ".json"
 
+type Profile struct {
+	xsdonvif.Profile
+	PathName string
+}
+
+type MediaUri struct {
+	xsdonvif.MediaUri
+	Profile *Profile
+}
+
 // 채널 사용해서 Intializing이 Done 됐는지
 type onvifDevice struct {
 	ctx       context.Context
@@ -46,11 +56,16 @@ type onvifDevice struct {
 
 	SystemDateTime         *xsdonvif.SystemDateTime
 	Capabilities           *xsdonvif.Capabilities
-	Profiles               *[]xsdonvif.Profile
-	StreamUris             *[]xsdonvif.MediaUri
+	Profiles               *[]Profile
+	StreamUris             *[]MediaUri
 	StorageConfigurations  *[]device.StorageConfiguration
 	RecordingConfiguration *recording.RecordingConfiguration
-	ptzMutex               sync.RWMutex
+
+	ptzRoom *PTZRoom
+}
+
+func (o *onvifDevice) isEnabledPTZ() bool {
+	return o.Capabilities == nil || o.Capabilities.PTZ.XAddr != ""
 }
 
 func (o *onvifDevice) initialize() error {
@@ -107,9 +122,18 @@ func (o *onvifDevice) initialize() error {
 			o.parent.Log(logger.Error, "Failed to get profiles of onvif device "+o.Conf.Name+": "+err.Error())
 		}
 
-		o.Profiles = &proResp.Profiles
+		profiles := []Profile{}
 
-		streamUris := []xsdonvif.MediaUri{}
+		for i, profile := range proResp.Profiles {
+			profiles = append(profiles, Profile{
+				Profile:  profile,
+				PathName: o.Conf.Name + "_" + fmt.Sprint(i),
+			})
+		}
+
+		o.Profiles = &profiles
+
+		streamUris := []MediaUri{}
 		o.parent.Log(logger.Info, "4")
 		for _, profile := range *o.Profiles {
 			stResp, err := o.getStreamUri(&profile.Token)
@@ -119,10 +143,27 @@ func (o *onvifDevice) initialize() error {
 				continue
 			}
 
-			streamUris = append(streamUris, stResp.MediaUri)
+			streamUris = append(streamUris, MediaUri{
+				MediaUri: stResp.MediaUri,
+				Profile:  &profile,
+			})
 
 		}
 		o.StreamUris = &streamUris
+
+		if o.isEnabledPTZ() {
+			p := PTZRoom{
+				available: o.isEnabledPTZ(),
+				dev:       o,
+				conf:      o.Conf,
+			}
+
+			err = p.initialize()
+			if err != nil {
+				o.parent.Log(logger.Error, "Failed to initialize PTZ room "+o.Conf.Name+": "+err.Error())
+			}
+			o.ptzRoom = &p
+		}
 
 		o.parent.Log(logger.Info, "onvif device "+o.Conf.Name+" initialized")
 	}()
@@ -535,6 +576,67 @@ func (o *onvifDevice) continuousMove(speed *xsdonvif.PTZSpeed) (*ptz.ContinuousM
 	}
 
 	return &reply.Body.ContinuousMoveResponse, nil
+}
+
+func (o *onvifDevice) gotoHomePosition() (*ptz.GotoHomePositionResponse, error) {
+	type Envelope struct {
+		Header struct{}
+		Body   struct {
+			GotoHomePositionResponse ptz.GotoHomePositionResponse
+		}
+	}
+
+	p := *(o.Profiles)
+
+	var reply Envelope
+	err := o.callMethod(
+		ptz.GotoHomePosition{
+			ProfileToken: &p[0].Token,
+			Speed: &xsdonvif.PTZSpeed{
+				PanTilt: &xsdonvif.Vector2D{
+					X: 1,
+					Y: 1,
+				},
+				Zoom: &xsdonvif.Vector1D{
+					X: 1,
+				},
+			},
+		},
+		&reply,
+	)
+
+	if err != nil {
+		o.parent.Log(logger.Error, "Failed to GotoHomePositionResponse move of onvif device "+o.Conf.Name+": "+err.Error())
+		return nil, err
+	}
+
+	return &reply.Body.GotoHomePositionResponse, nil
+}
+
+func (o *onvifDevice) setHomePosition() (*ptz.SetHomePositionResponse, error) {
+	type Envelope struct {
+		Header struct{}
+		Body   struct {
+			SetHomePositionResponse ptz.SetHomePositionResponse
+		}
+	}
+
+	p := *(o.Profiles)
+
+	var reply Envelope
+	err := o.callMethod(
+		ptz.SetHomePosition{
+			ProfileToken: p[0].Token,
+		},
+		&reply,
+	)
+
+	if err != nil {
+		o.parent.Log(logger.Error, "Failed to SetHomePosition move of onvif device "+o.Conf.Name+": "+err.Error())
+		return nil, err
+	}
+
+	return &reply.Body.SetHomePositionResponse, nil
 }
 
 // 실패하면 채널을 통해서 에러 사실을 알림

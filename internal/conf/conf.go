@@ -308,8 +308,9 @@ type Conf struct {
 	PathDefaults Path `json:"pathDefaults"`
 
 	// Paths
-	OptionalPaths map[string]*OptionalPath `json:"paths"`
-	Paths         map[string]*Path         `json:"-"` // filled by Check()
+	OptionalPaths    map[string]*OptionalPath `json:"paths"`
+	Paths            map[string]*Path         `json:"-"` // filled by Check()
+	OnvifDevicePaths map[string]*Path
 }
 
 func (conf *Conf) setDefaults() {

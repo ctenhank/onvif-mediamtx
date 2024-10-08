@@ -51,10 +51,11 @@ var cli struct {
 
 // Core is an instance of MediaMTX.
 type Core struct {
-	ctx             context.Context
-	ctxCancel       func()
-	confPath        string
-	conf            *conf.Conf
+	ctx       context.Context
+	ctxCancel func()
+	confPath  string
+	conf      *conf.Conf
+
 	logger          *logger.Logger
 	externalCmdPool *externalcmd.Pool
 	authManager     *auth.Manager
@@ -302,15 +303,7 @@ func (p *Core) createResources(initial bool) error {
 		p.pprof = i
 	}
 
-	if p.recordCleaner == nil {
-		p.recordCleaner = &recordcleaner.Cleaner{
-			PathConfs: p.conf.Paths,
-			Parent:    p,
-		}
-		p.recordCleaner.Initialize()
-	}
-
-	if p.conf.Playback && p.controlServer == nil {
+	if p.conf.Control && p.controlServer == nil {
 		i := &control.Control{
 			Address:        p.conf.ControlAddress,
 			Encryption:     p.conf.ControlEncryption,
@@ -329,6 +322,29 @@ func (p *Core) createResources(initial bool) error {
 		p.controlServer = i
 	}
 
+	devices := p.controlServer.OnvifDevices
+	paths := map[string]*conf.Path{}
+	for _, d := range devices {
+		for _, u := range *d.StreamUris {
+			name := u.Profile.PathName
+
+			p := *d.Conf
+			p.Source = string(u.Uri)
+			p.Name = name
+
+			paths[name] = &p
+		}
+	}
+	p.conf.OnvifDevicePaths = paths
+
+	if p.recordCleaner == nil {
+		p.recordCleaner = &recordcleaner.Cleaner{
+			PathConfs: p.conf.OnvifDevicePaths,
+			Parent:    p,
+		}
+		p.recordCleaner.Initialize()
+	}
+
 	if p.conf.Playback &&
 		p.playbackServer == nil {
 		i := &playback.Server{
@@ -339,7 +355,7 @@ func (p *Core) createResources(initial bool) error {
 			AllowOrigin:    p.conf.PlaybackAllowOrigin,
 			TrustedProxies: p.conf.PlaybackTrustedProxies,
 			ReadTimeout:    p.conf.ReadTimeout,
-			PathConfs:      p.conf.Paths,
+			PathConfs:      p.conf.OnvifDevicePaths,
 			AuthManager:    p.authManager,
 			Parent:         p,
 		}
@@ -351,19 +367,6 @@ func (p *Core) createResources(initial bool) error {
 	}
 
 	if p.pathManager == nil {
-		devices := p.controlServer.OnvifDevices
-		paths := map[string]*conf.Path{}
-		for _, d := range devices {
-			for i, u := range *d.StreamUris {
-				name := d.Conf.Name + "-" + fmt.Sprint(i)
-
-				p := *d.Conf
-				p.Source = string(u.Uri)
-				p.Name = name
-
-				paths[name] = &p
-			}
-		}
 
 		p.pathManager = &pathManager{
 			logLevel:          p.conf.LogLevel,
@@ -373,7 +376,7 @@ func (p *Core) createResources(initial bool) error {
 			writeTimeout:      p.conf.WriteTimeout,
 			writeQueueSize:    p.conf.WriteQueueSize,
 			udpMaxPayloadSize: p.conf.UDPMaxPayloadSize,
-			pathConfs:         paths,
+			pathConfs:         p.conf.OnvifDevicePaths,
 			externalCmdPool:   p.externalCmdPool,
 			parent:            p,
 		}

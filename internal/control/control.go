@@ -1,6 +1,8 @@
 package control
 
 import (
+	"errors"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -10,6 +12,10 @@ import (
 	"github.com/ctenhank/mediamtx/internal/restrictnetwork"
 	"github.com/gin-gonic/gin"
 )
+
+type ControlError struct {
+	Error string `json:"error"`
+}
 
 type apiParent interface {
 	logger.Writer
@@ -49,8 +55,13 @@ func (c *Control) Initialize() error {
 
 	group := router.Group("/")
 
-	ptz := group.Group("/ptz/:name")
-	ptz.GET("/join", c.joinPTZ)
+	// path := group.Group("/path")
+	// path.GET("/:name")
+
+	group.GET("/ptz/:name", c.getPTZ)
+
+	// ptz := group.Group("/ptz/:name")
+	// ptz.GET("/join", c.joinPTZ)
 
 	network, address := restrictnetwork.Restrict("tcp", c.Address)
 
@@ -79,19 +90,6 @@ func (c *Control) Initialize() error {
 		dev.initialize()
 
 		c.OnvifDevices = append(c.OnvifDevices, *dev)
-		p := PTZRoom{
-			available: true,
-			dev:       dev,
-			conf:      path,
-		}
-
-		err := p.initialize()
-		if err != nil {
-			c.Log(logger.Error, "Failed to initialize PTZ room "+path.Name+": "+err.Error())
-			continue
-		}
-		c.ptzRoom = append(c.ptzRoom, p)
-
 	}
 
 	c.Log(logger.Info, "listener opened on "+address)
@@ -118,19 +116,37 @@ func (c *Control) getPtzRoom(name string) *PTZRoom {
 	return nil
 }
 
-func (c *Control) joinPTZ(ctx *gin.Context) {
-	params := ctx.Params
-	query := ctx.Request.URL.RawQuery
+func (c *Control) getOnvifDevice(name string) *onvifDevice {
+	for _, dev := range c.OnvifDevices {
+		for _, profiles := range *dev.Profiles {
+			if profiles.PathName == name {
+				return &dev
+			}
+		}
+	}
+	return nil
+}
 
+func (c *Control) writeError(ctx *gin.Context, status int, err error) {
+	c.Log(logger.Error, err.Error())
+
+	ctx.JSON(status, ControlError{
+		Error: err.Error(),
+	})
+}
+
+func (c *Control) getPTZ(ctx *gin.Context) {
+	params := ctx.Params
 	channelName := params.ByName("name")
 
-	if r := c.getPtzRoom(channelName); r == nil {
-		c.Log(logger.Warn, "No such ptz room: %v", channelName)
+	dev := c.getOnvifDevice(channelName)
+
+	if dev == nil || dev.ptzRoom == nil {
+		c.writeError(ctx, http.StatusNotFound, errors.New("찾을 수 없는 채널명입니다"))
 		return
+	} else if dev.isEnabledPTZ() {
+		c.writeError(ctx, http.StatusBadRequest, errors.New("PTZ가 지원되지 않는 채널입니다"))
 	} else {
-		serveWs(r, ctx.Writer, ctx.Request)
+		serveWs(dev.ptzRoom, ctx.Writer, ctx.Request)
 	}
-
-	c.Log(logger.Info, "joinPTZ: params(%v), query(%v)", params, query)
-
 }
