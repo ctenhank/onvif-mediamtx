@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/ctenhank/mediamtx/internal/conf"
@@ -43,7 +44,7 @@ func convertPathConfToUrl(path conf.Path) (*url.URL, error) {
 	port := u.Port()
 
 	if port == "" {
-		port = path.APIPort
+		port = strings.Replace(path.APIPort, ":", "", -1)
 	}
 
 	return &url.URL{
