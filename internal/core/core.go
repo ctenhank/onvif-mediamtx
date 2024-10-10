@@ -325,14 +325,16 @@ func (p *Core) createResources(initial bool) error {
 	devices := p.controlServer.OnvifDevices
 	paths := map[string]*conf.Path{}
 	for _, d := range devices {
-		for _, u := range *d.StreamUris {
-			name := u.Profile.PathName
+		if d.StreamUris != nil {
+			for _, u := range *d.StreamUris {
+				name := u.Profile.PathName
 
-			p := *d.Conf
-			p.Source = string(u.Uri)
-			p.Name = name
+				p := *d.Conf
+				p.Source = string(u.Uri)
+				p.Name = name
 
-			paths[name] = &p
+				paths[name] = &p
+			}
 		}
 	}
 	p.conf.OnvifDevicePaths = paths

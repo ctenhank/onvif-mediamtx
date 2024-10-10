@@ -23,7 +23,7 @@ func (c *Control) getIPCameras(ctx *gin.Context) {
 			cams = append(cams, defs.IPCamera{
 				Name:      dev.Conf.Name,
 				PtzSupprt: dev.isEnabledPTZ(),
-				Channel:   ch,
+				Channels:  ch,
 			})
 		}
 	}

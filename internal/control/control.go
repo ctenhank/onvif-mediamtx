@@ -40,9 +40,15 @@ func convertPathConfToUrl(path conf.Path) (*url.URL, error) {
 		return nil, err
 	}
 
+	port := u.Port()
+
+	if port == "" {
+		port = path.APIPort
+	}
+
 	return &url.URL{
 		Scheme: "http",
-		Host:   u.Host + path.APIPort,
+		Host:   u.Hostname() + ":" + port,
 		User:   url.UserPassword(path.Username, path.Password),
 	}, nil
 }
@@ -88,7 +94,11 @@ func (c *Control) Initialize() error {
 			Conf:   path,
 			parent: c,
 		}
-		dev.initialize()
+		err := dev.initialize()
+		if err != nil {
+			c.Log(logger.Error, "failed to initialize onvif device: %v", err)
+			continue
+		}
 
 		c.OnvifDevices = append(c.OnvifDevices, *dev)
 	}

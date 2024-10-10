@@ -32,7 +32,7 @@ import (
 const directory = "onvif-test"
 const debug = true
 
-var filename = time.Now().Format("20060102_150405") + ".json"
+var filename = time.Now().Format("20060102_150405")
 
 type Profile struct {
 	xsdonvif.Profile
@@ -178,7 +178,7 @@ func (o *onvifDevice) initialize() error {
 
 func (o *onvifDevice) test(tag string, err error, t interface{}) {
 	var data []byte
-	filepath := directory + "/" + filename
+	filepath := directory + "/" + filename + "_" + o.Conf.Name + ".json"
 	if _, err := os.Stat(filepath); err == nil {
 		data, err = os.ReadFile(filepath)
 		if err != nil {
@@ -244,6 +244,8 @@ func (o *onvifDevice) callMethod(method interface{}, reply interface{}) error {
 		o.parent.Log(logger.Error, "Failed to read body of "+tag+" of onvif device "+o.Conf.Name+": "+err.Error())
 		return err
 	}
+
+	// o.parent.Log(logger.Info, "onvif device "+o.Conf.Name+": "+tag+" response: "+string(b))
 
 	if (resp.StatusCode / 100) == 2 { // 성공 경우
 		err = xml.Unmarshal(b, reply)
