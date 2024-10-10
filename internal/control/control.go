@@ -7,15 +7,12 @@ import (
 	"time"
 
 	"github.com/ctenhank/mediamtx/internal/conf"
+	"github.com/ctenhank/mediamtx/internal/defs"
 	"github.com/ctenhank/mediamtx/internal/logger"
 	"github.com/ctenhank/mediamtx/internal/protocols/httpp"
 	"github.com/ctenhank/mediamtx/internal/restrictnetwork"
 	"github.com/gin-gonic/gin"
 )
-
-type ControlError struct {
-	Error string `json:"error"`
-}
 
 type apiParent interface {
 	logger.Writer
@@ -57,6 +54,10 @@ func (c *Control) Initialize() error {
 
 	// path := group.Group("/path")
 	// path.GET("/:name")
+	ipcam := group.Group("/ipcam")
+	ipcam.GET("/", c.getIPCameras)
+	ipcam.GET("/:name", c.getIPCamera)
+	ipcam.GET("/:name/channel", c.getChannels)
 
 	group.GET("/ptz/:name", c.getPTZ)
 
@@ -130,7 +131,7 @@ func (c *Control) getOnvifDevice(name string) *onvifDevice {
 func (c *Control) writeError(ctx *gin.Context, status int, err error) {
 	c.Log(logger.Error, err.Error())
 
-	ctx.JSON(status, ControlError{
+	ctx.JSON(status, defs.ControlError{
 		Error: err.Error(),
 	})
 }
