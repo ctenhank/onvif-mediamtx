@@ -20,12 +20,12 @@ func (c *Control) getIPCameras(ctx *gin.Context) {
 				},
 			})
 
-			cams = append(cams, defs.IPCamera{
-				Name:      dev.Conf.Name,
-				PtzSupprt: dev.isEnabledPTZ(),
-				Channels:  ch,
-			})
 		}
+		cams = append(cams, defs.IPCamera{
+			Name:      dev.Conf.Name,
+			PtzSupprt: dev.isEnabledPTZ(),
+			Channels:  ch,
+		})
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
