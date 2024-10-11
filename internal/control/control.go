@@ -156,7 +156,7 @@ func (c *Control) getPTZ(ctx *gin.Context) {
 	if dev == nil || dev.ptzRoom == nil {
 		c.writeError(ctx, http.StatusNotFound, errors.New("찾을 수 없는 채널명입니다"))
 		return
-	} else if dev.isEnabledPTZ() {
+	} else if !dev.isEnabledPTZ() {
 		c.writeError(ctx, http.StatusBadRequest, errors.New("PTZ가 지원되지 않는 채널입니다"))
 	} else {
 		serveWs(dev.ptzRoom, ctx.Writer, ctx.Request)
