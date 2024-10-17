@@ -60,6 +60,10 @@ type onvifDevice struct {
 	StreamUris             *[]MediaUri
 	StorageConfigurations  *[]device.StorageConfiguration
 	RecordingConfiguration *recording.RecordingConfiguration
+	SnapshotUri            *xsdonvif.MediaUri
+
+	onvifUrl url.URL
+	client   *http.Client
 
 	ptzRoom *PTZRoom
 }
@@ -81,18 +85,24 @@ func (o *onvifDevice) initialize() error {
 	o.ctxCancel = ctxCancel
 
 	// Add Digest Auth
-	cli := &http.Client{
-		Transport: &digest.Transport{
-			Username: o.Conf.Username,
-			Password: o.Conf.Password,
+	transport := &digest.Transport{
+		Username: o.Conf.Username,
+		Password: o.Conf.Password,
+	}
+
+	o.client = &http.Client{
+		Transport: &retryableTransport{
+			transport: transport,
 		},
 	}
 
 	dev, err := goonvif.NewDevice(goonvif.DeviceParams{
-		Xaddr:      o.Url.Host,
-		Username:   o.Conf.Username,
-		Password:   o.Conf.Password,
-		HttpClient: cli,
+		Xaddr:    o.Url.Host,
+		Username: o.Conf.Username,
+		Password: o.Conf.Password,
+		HttpClient: &http.Client{
+			Transport: transport,
+		},
 	})
 
 	if err != nil {
@@ -153,6 +163,12 @@ func (o *onvifDevice) initialize() error {
 
 		}
 		o.StreamUris = &streamUris
+
+		snResp, err := o.getSnapshotUri()
+		if err != nil {
+			o.parent.Log(logger.Error, "Failed to get snapshot uri of onvif device "+o.Conf.Name+": "+err.Error())
+		}
+		o.SnapshotUri = &snResp.MediaUri
 
 		if o.isEnabledPTZ() {
 			p := PTZRoom{
@@ -642,6 +658,32 @@ func (o *onvifDevice) setHomePosition() (*ptz.SetHomePositionResponse, error) {
 	}
 
 	return &reply.Body.SetHomePositionResponse, nil
+}
+
+func (o *onvifDevice) getSnapshotUri() (*media.GetSnapshotUriResponse, error) {
+	type Envelope struct {
+		Header struct{}
+		Body   struct {
+			GetSnapshotUriResponse media.GetSnapshotUriResponse
+		}
+	}
+
+	p := *(o.Profiles)
+
+	var reply Envelope
+	err := o.callMethod(
+		media.GetSnapshotUri{
+			ProfileToken: p[0].Token,
+		},
+		&reply,
+	)
+
+	if err != nil {
+		o.parent.Log(logger.Error, "Failed to GetSnapshotUriResponse move of onvif device "+o.Conf.Name+": "+err.Error())
+		return nil, err
+	}
+
+	return &reply.Body.GetSnapshotUriResponse, nil
 }
 
 // 실패하면 채널을 통해서 에러 사실을 알림

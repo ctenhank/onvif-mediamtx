@@ -66,10 +66,9 @@ func (c *Control) Initialize() error {
 	ipcam.GET("/:name", c.getIPCamera)
 	ipcam.GET("/:name/channel", c.getChannels)
 
-	group.GET("/ptz/:name", c.getPTZ)
+	ipcam.GET("/:name/snapshot", c.getSnapshot)
 
-	// ptz := group.Group("/ptz/:name")
-	// ptz.GET("/join", c.joinPTZ)
+	group.GET("/ptz/:name", c.getPTZ)
 
 	network, address := restrictnetwork.Restrict("tcp", c.Address)
 

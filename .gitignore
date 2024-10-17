@@ -9,3 +9,4 @@ mediamtx.yml
 /build
 onvif-test/
 .vscode/
+snapshots/
