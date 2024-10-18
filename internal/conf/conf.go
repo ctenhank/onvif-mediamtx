@@ -169,6 +169,7 @@ type Conf struct {
 	RunOnConnect        string          `json:"runOnConnect"`
 	RunOnConnectRestart bool            `json:"runOnConnectRestart"`
 	RunOnDisconnect     string          `json:"runOnDisconnect"`
+	TerminateIfNoPaths  bool            `json:"TerminateIfNoPaths"`
 
 	// Authentication
 	AuthMethod                AuthMethod                  `json:"authMethod"`
@@ -322,6 +323,7 @@ func (conf *Conf) setDefaults() {
 	conf.WriteTimeout = 10 * StringDuration(time.Second)
 	conf.WriteQueueSize = 512
 	conf.UDPMaxPayloadSize = 1472
+	conf.TerminateIfNoPaths = true
 
 	// Authentication
 	conf.AuthInternalUsers = defaultAuthInternalUsers

@@ -4,10 +4,11 @@ After=multi-user.target
 
 [Service]
 WorkingDirectory=/home/inssac/simple-mediamtx
-ExecStart=/home/inssac/simple-mediamtx/build/mediamtx /home/inssac/simple-mediamtx/mediamtx.yml
+ExecStart=/home/inssac/simple-mediamtx/mediamtx /home/inssac/simple-mediamtx/mediamtx.yml
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
+RestartSec=60
 
 [Install]
 WantedBy=multi-user.target

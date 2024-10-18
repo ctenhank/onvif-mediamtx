@@ -350,6 +350,11 @@ func (p *Core) createResources(initial bool) error {
 			}
 		}
 	}
+
+	if p.conf.TerminateIfNoPaths && len(paths) == 0 {
+		panic("No paths found")
+	}
+
 	p.conf.OnvifDevicePaths = paths
 
 	if p.recordCleaner == nil {
