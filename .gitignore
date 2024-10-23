@@ -10,3 +10,5 @@ mediamtx.yml
 onvif-test/
 .vscode/
 snapshots/
+mediamtx
+*.service
