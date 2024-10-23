@@ -89,17 +89,17 @@ func (c *Client) handleContinuousMove(direction string) (interface{}, error) {
 
 	pan, tilt, zoom := .0, .0, .0
 	if direction == "left" {
-		pan = -1
+		pan = -c.ptzRoom.conf.PTZPanSpeed
 	} else if direction == "right" {
-		pan = 1
+		pan = c.ptzRoom.conf.PTZPanSpeed
 	} else if direction == "up" {
-		tilt = 1
+		tilt = c.ptzRoom.conf.PTZTiltSpeed
 	} else if direction == "down" {
-		tilt = -1
+		tilt = -c.ptzRoom.conf.PTZTiltSpeed
 	} else if direction == "zoomIn" {
-		zoom = 1
+		zoom = c.ptzRoom.conf.PTZZoomSpeed
 	} else if direction == "zoomOut" {
-		zoom = -1
+		zoom = -c.ptzRoom.conf.PTZZoomSpeed
 	} else {
 		return nil, errors.New("invalid direction")
 	}
