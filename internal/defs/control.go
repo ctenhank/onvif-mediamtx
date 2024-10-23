@@ -15,7 +15,8 @@ type Channel struct {
 }
 
 type IPCamera struct {
+	Id        string    `json:"id"`
 	Name      string    `json:"name"`
 	PtzSupprt bool      `json:"ptz_support"`
-	Channel   []Channel `json:"channel"`
+	Channels  []Channel `json:"channels"`
 }

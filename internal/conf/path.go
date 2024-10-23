@@ -119,10 +119,10 @@ type Path struct {
 	Password                   string         `json:"password"`
 
 	// CCTV Endpoint Port
-	APIPort    string `json:"apiPort"`
-	PTZSupport bool   `json:"ptzSupport"` // Deprecated
-	Brand      string `json:"brand"`      // Deprecated
-	Id         string `json:"id"`
+	RemoteDevice bool   `json:"remoteDevice"` // Is Remote Device?
+	APIPort      string `json:"apiPort"`
+	RTSPPort     string `json:"rtspPort"`
+	Id           string `json:"id"`
 
 	// Record
 	Record                bool           `json:"record"`
@@ -199,6 +199,8 @@ func (pconf *Path) setDefaults() {
 
 	// Control Server
 	pconf.APIPort = ":80"
+	pconf.RemoteDevice = false
+	pconf.RTSPPort = ":554"
 
 }
 

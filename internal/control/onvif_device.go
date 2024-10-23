@@ -32,7 +32,7 @@ import (
 const directory = "onvif-test"
 const debug = true
 
-var filename = time.Now().Format("20060102_150405") + ".json"
+var filename = time.Now().Format("20060102_150405")
 
 type Profile struct {
 	xsdonvif.Profile
@@ -60,6 +60,10 @@ type onvifDevice struct {
 	StreamUris             *[]MediaUri
 	StorageConfigurations  *[]device.StorageConfiguration
 	RecordingConfiguration *recording.RecordingConfiguration
+	SnapshotUri            *xsdonvif.MediaUri
+
+	onvifUrl url.URL
+	client   *http.Client
 
 	ptzRoom *PTZRoom
 }
@@ -81,18 +85,24 @@ func (o *onvifDevice) initialize() error {
 	o.ctxCancel = ctxCancel
 
 	// Add Digest Auth
-	cli := &http.Client{
-		Transport: &digest.Transport{
-			Username: o.Conf.Username,
-			Password: o.Conf.Password,
+	transport := &digest.Transport{
+		Username: o.Conf.Username,
+		Password: o.Conf.Password,
+	}
+
+	o.client = &http.Client{
+		Transport: &retryableTransport{
+			transport: transport,
 		},
 	}
 
 	dev, err := goonvif.NewDevice(goonvif.DeviceParams{
-		Xaddr:      o.Url.Host,
-		Username:   o.Conf.Username,
-		Password:   o.Conf.Password,
-		HttpClient: cli,
+		Xaddr:    o.Url.Host,
+		Username: o.Conf.Username,
+		Password: o.Conf.Password,
+		HttpClient: &http.Client{
+			Transport: transport,
+		},
 	})
 
 	if err != nil {
@@ -154,6 +164,12 @@ func (o *onvifDevice) initialize() error {
 		}
 		o.StreamUris = &streamUris
 
+		snResp, err := o.getSnapshotUri()
+		if err != nil {
+			o.parent.Log(logger.Error, "Failed to get snapshot uri of onvif device "+o.Conf.Name+": "+err.Error())
+		}
+		o.SnapshotUri = &snResp.MediaUri
+
 		if o.isEnabledPTZ() {
 			p := PTZRoom{
 				available: o.isEnabledPTZ(),
@@ -178,7 +194,7 @@ func (o *onvifDevice) initialize() error {
 
 func (o *onvifDevice) test(tag string, err error, t interface{}) {
 	var data []byte
-	filepath := directory + "/" + filename
+	filepath := directory + "/" + filename + "_" + o.Conf.Name + ".json"
 	if _, err := os.Stat(filepath); err == nil {
 		data, err = os.ReadFile(filepath)
 		if err != nil {
@@ -244,6 +260,8 @@ func (o *onvifDevice) callMethod(method interface{}, reply interface{}) error {
 		o.parent.Log(logger.Error, "Failed to read body of "+tag+" of onvif device "+o.Conf.Name+": "+err.Error())
 		return err
 	}
+
+	// o.parent.Log(logger.Info, "onvif device "+o.Conf.Name+": "+tag+" response: "+string(b))
 
 	if (resp.StatusCode / 100) == 2 { // 성공 경우
 		err = xml.Unmarshal(b, reply)
@@ -640,6 +658,32 @@ func (o *onvifDevice) setHomePosition() (*ptz.SetHomePositionResponse, error) {
 	}
 
 	return &reply.Body.SetHomePositionResponse, nil
+}
+
+func (o *onvifDevice) getSnapshotUri() (*media.GetSnapshotUriResponse, error) {
+	type Envelope struct {
+		Header struct{}
+		Body   struct {
+			GetSnapshotUriResponse media.GetSnapshotUriResponse
+		}
+	}
+
+	p := *(o.Profiles)
+
+	var reply Envelope
+	err := o.callMethod(
+		media.GetSnapshotUri{
+			ProfileToken: p[0].Token,
+		},
+		&reply,
+	)
+
+	if err != nil {
+		o.parent.Log(logger.Error, "Failed to GetSnapshotUriResponse move of onvif device "+o.Conf.Name+": "+err.Error())
+		return nil, err
+	}
+
+	return &reply.Body.GetSnapshotUriResponse, nil
 }
 
 // 실패하면 채널을 통해서 에러 사실을 알림

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/ctenhank/mediamtx/internal/conf"
@@ -40,9 +41,15 @@ func convertPathConfToUrl(path conf.Path) (*url.URL, error) {
 		return nil, err
 	}
 
+	port := u.Port()
+
+	if port == "" {
+		port = strings.Replace(path.APIPort, ":", "", -1)
+	}
+
 	return &url.URL{
 		Scheme: "http",
-		Host:   u.Host + path.APIPort,
+		Host:   u.Hostname() + ":" + port,
 		User:   url.UserPassword(path.Username, path.Password),
 	}, nil
 }
@@ -59,10 +66,9 @@ func (c *Control) Initialize() error {
 	ipcam.GET("/:name", c.getIPCamera)
 	ipcam.GET("/:name/channel", c.getChannels)
 
-	group.GET("/ptz/:name", c.getPTZ)
+	ipcam.GET("/:name/snapshot", c.getSnapshot)
 
-	// ptz := group.Group("/ptz/:name")
-	// ptz.GET("/join", c.joinPTZ)
+	group.GET("/ptz/:name", c.getPTZ)
 
 	network, address := restrictnetwork.Restrict("tcp", c.Address)
 
@@ -88,7 +94,11 @@ func (c *Control) Initialize() error {
 			Conf:   path,
 			parent: c,
 		}
-		dev.initialize()
+		err := dev.initialize()
+		if err != nil {
+			c.Log(logger.Error, "failed to initialize onvif device: %v", err)
+			continue
+		}
 
 		c.OnvifDevices = append(c.OnvifDevices, *dev)
 	}
@@ -145,7 +155,7 @@ func (c *Control) getPTZ(ctx *gin.Context) {
 	if dev == nil || dev.ptzRoom == nil {
 		c.writeError(ctx, http.StatusNotFound, errors.New("찾을 수 없는 채널명입니다"))
 		return
-	} else if dev.isEnabledPTZ() {
+	} else if !dev.isEnabledPTZ() {
 		c.writeError(ctx, http.StatusBadRequest, errors.New("PTZ가 지원되지 않는 채널입니다"))
 	} else {
 		serveWs(dev.ptzRoom, ctx.Writer, ctx.Request)

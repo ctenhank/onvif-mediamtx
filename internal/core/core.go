@@ -4,6 +4,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -325,16 +326,35 @@ func (p *Core) createResources(initial bool) error {
 	devices := p.controlServer.OnvifDevices
 	paths := map[string]*conf.Path{}
 	for _, d := range devices {
-		for _, u := range *d.StreamUris {
-			name := u.Profile.PathName
 
-			p := *d.Conf
-			p.Source = string(u.Uri)
-			p.Name = name
+		// hostname := d.Url.Hostname()
 
-			paths[name] = &p
+		if d.StreamUris != nil {
+			for _, u := range *d.StreamUris {
+				name := u.Profile.PathName
+
+				_p := *d.Conf
+				_p.Source = string(u.Uri)
+				if d.Conf.RemoteDevice {
+					_u, err := url.Parse(string(u.Uri))
+					if err != nil {
+						p.Log(logger.Error, "Error parsing URI: %s", err)
+						continue
+					}
+					_u.Host = d.Url.Hostname() + _p.RTSPPort
+					_p.Source = _u.String()
+				}
+				_p.Name = name
+
+				paths[name] = &_p
+			}
 		}
 	}
+
+	if p.conf.TerminateIfNoPaths && len(paths) == 0 {
+		panic("No paths found")
+	}
+
 	p.conf.OnvifDevicePaths = paths
 
 	if p.recordCleaner == nil {
