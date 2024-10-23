@@ -159,11 +159,10 @@ func (c *Control) getSnapshot(ctx *gin.Context) {
 	filename := name + ".jpeg"
 
 	// path := directory + "/" + filename
-	if fs, err := os.Stat(filename); err == nil && fs.ModTime().Before(time.Now().Add(-1*time.Minute)) {
+	if fs, err := os.Stat(filename); err == nil && fs.ModTime().Before(time.Now().Add(-time.Duration(cam.Conf.SnapshotPeriodSeconds)*time.Second)) {
 		ctx.File("snapshots/" + name + ".jpeg")
 		return
 	}
-
 
 	snapshotUrl, err := url.Parse(string(cam.SnapshotUri.Uri))
 
@@ -196,7 +195,7 @@ func (c *Control) getSnapshot(ctx *gin.Context) {
 	}
 
 	c.Log(logger.Info, "Snapshot taken from "+name+"; "+resp.Status+", "+snapshotUrl.String()+"\n"+resp.Header.Get("Content-Type"))
-  
+
 	os.MkdirAll(directory, os.ModePerm)
 	err = os.WriteFile(directory+"/"+filename, b, 0644)
 

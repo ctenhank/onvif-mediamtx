@@ -119,13 +119,14 @@ type Path struct {
 	Password                   string         `json:"password"`
 
 	// CCTV Endpoint Port
-	RemoteDevice bool    `json:"remoteDevice"` // Is Remote Device?
-	APIPort      string  `json:"apiPort"`
-	RTSPPort     string  `json:"rtspPort"`
-	Id           string  `json:"id"`
-	PTZPanSpeed  float64 `json:"ptzPanSpeed"`
-	PTZTiltSpeed float64 `json:"ptzTiltSpeed"`
-	PTZZoomSpeed float64 `json:"ptzZoomSpeed"`
+	RemoteDevice          bool    `json:"remoteDevice"` // Is Remote Device?
+	APIPort               string  `json:"apiPort"`
+	RTSPPort              string  `json:"rtspPort"`
+	Id                    string  `json:"id"`
+	PTZPanSpeed           float64 `json:"ptzPanSpeed"`
+	PTZTiltSpeed          float64 `json:"ptzTiltSpeed"`
+	PTZZoomSpeed          float64 `json:"ptzZoomSpeed"`
+	SnapshotPeriodSeconds int     `json:"snapshotPeriodSeconds"`
 
 	// Record
 	Record                bool           `json:"record"`
@@ -207,6 +208,7 @@ func (pconf *Path) setDefaults() {
 	pconf.PTZPanSpeed = .5
 	pconf.PTZTiltSpeed = .5
 	pconf.PTZZoomSpeed = .5
+	pconf.SnapshotPeriodSeconds = 15
 
 }
 
